@@ -1,0 +1,15 @@
+{
+  "name": "02",
+  "version": "1.0.0",
+  "description": "an [ES2015](https://babeljs.io/docs/learn-es2015/) [**d3v4**](https://github.com/d3/d3/blob/master/API.md) fork of the bl.ock [distance-limited Voronoi Interaction III](http://bl.ocks.org/Kcnarf/4de291d8b2d1e6501990540d87bc1baf) from [Kcnarf](http://bl.ocks.org/Kcnarf)",
+  "main": "createSubsets.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "@micahstubbs <micah.stubbs@gmail.com> (https://twitter.com/micahstubbs)",
+  "license": "MIT",
+  "dependencies": {
+    "jsonfile": "^2.3.1",
+    "lodash": "^4.15.0"
+  }
+}
