@@ -126,7 +126,11 @@
       categoricalColumns
     }
 
-    d3VoronoiScatterplot.drawVoronoiScatterplot('#chart', subset1, options);
+    const update = d3VoronoiScatterplot.drawVoronoiScatterplot('#chart', subset0, options);
+    console.log('update', update);
+    console.log('d3VoronoiScatterplot', d3VoronoiScatterplot);
+    // d3VoronoiScatterplot.drawVoronoiScatterplot.update(subset1);
+    // update(subset1);
 	}
 </script>
 </body>
