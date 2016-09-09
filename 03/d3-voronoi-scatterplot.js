@@ -848,7 +848,7 @@
     var yVariable = cfg.yVariable;
     var rVariable = undefined;
     var idVariable = cfg.idVariable;
-    var groupByVariable = undefined;
+    var groupByVariable = cfg.groupByVariable;
     var wrapperId = cfg.wrapperId;
     var wrapperLabel = cfg.wrapperLabel;
     var tooltipVariables = cfg.tooltipColumns;
@@ -988,14 +988,21 @@
     var circleGroup = wrapper.append('g').attr('class', 'circleWrapper');
 
     function update(data, options) {
+      console.log('update function was called');
+      // console.log('data from update function', data);
+
       // an extra delay to allow large 
       // amounts of points time to render
       var marksDelay = 0;
       if (typeof options !== 'undefined') {
         marksDelay = options.marksDelay;
+
+        // if a new groupByVariable is passed in, use it
+        if (typeof options.groupByVariable !== 'undefined') {
+          groupByVariable = options.groupByVariable;
+        };
       }
-      console.log('update function was called');
-      // console.log('data from update function', data);
+
       // Place the circles
       var updateSelection = circleGroup.selectAll('circle') // circleGroup.selectAll('.marks')
       .data(function () {
