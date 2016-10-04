@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv='Content-Type' content='text/html;charset=utf-8'/>
+<title>Scatterplot with Distance-Limited Voronoi</title>
+<script src='https://d3js.org/d3.v4.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.15.0/lodash.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.10.3/babel.min.js'></script>
+<script src="https://d3js.org/d3-queue.v2.min.js"></script>
+<script src='d3-voronoi-scatterplot.js'></script>
+<link href='http://fonts.googleapis.com/css?family=Open+Sans:700,400,300' rel='stylesheet' type='text/css'>
+<link rel="icon" href="data:;base64,iVBORw0KGgo=">
+<style>
+	body {
+	  font-family: 'Open Sans', sans-serif;
+	  font-size: 12px;
+	  font-weight: 400;
+	  color: #525252;
+	  text-align: center;
+	}
+	html, body { 
+		width:auto; 
+		height:auto; 
+	}
+	.axis path,
+	.axis line {
+		fill: none;
+		stroke: #B3B3B3;
+		shape-rendering: crispEdges;
+	}
+	.axis text {
+		font-size: 10px;
+		fill: #6B6B6B;
+	}
+</style>
+</head>
+<body>
+	<div id='cont' class='container-fluid text-center'>
+		<div class='row scatter'>
+			<h6 style='color: #A6A6A6;'>Distance-limited Voronoi - tooltip shown only if mouse is close enougth</h6>
+			<div>
+				<div id='chart'></div>
+			</div>
+      <button type="button">Update</button>
+		</div>
+	</div>
+<script lang='babel' type='text/babel'>
+  var queue = d3_queue.queue();
+
+  queue
+    .defer(d3.json, "subset-0.json")
+    .defer(d3.json, "subset-1.json")
+    .defer(d3.json, "subset-2.json")
+    .defer(d3.json, "subset-3.json")
+    .await(ready);
+
+	function ready(error, subset0, subset1, subset2, subset3) {
+    const subsets = {
+      0: subset0,
+      1: subset1,
+      2: subset2,
+      3: subset3
+    };
+
+    const xVariable = 'GDP_perCapita';
+    const yVariable = 'lifeExpectancy';
+ 
+    const getGlobalExtentsOptions = {
+      xVariable,
+      yVariable
+    }
+    const globalExtents = getGlobalExtents(subsets, getGlobalExtentsOptions);
+
+		const tooltipColumns = [
+    	{
+    	  name: 'Country'
+    	},
+    	{
+    	  name: 'GDP',
+    	  type: 'numeric',
+    	  format: ',.0f'
+    	},
+    	{
+    	  name: 'lifeExpectancy',
+    	  type: 'numeric',
+    	  format: ',.0f'
+    	},
+    	{
+    	  name: 'GDP_perCapita',
+    	  type: 'numeric',
+    	  format: ',.0f'
+    	}
+  	];
+
+  	const numericColumns = [
+  		'GDP',
+  		'GDP_perCapita',
+  		'lifeExpectancy',
+  	];
+
+  	const marks = {
+    	r: 2,
+    	fillOpacity: 0.3,
+    	colors: [
+    	  '#1f78b4',
+    	  '#ff7f00',
+    	  '#33a02c',
+    	  '#e31a1c',
+    	  '#6a3d9a',
+    	  '#b15928',
+    	  '#a6cee3',
+    	  '#fdbf6f',
+    	  '#b2df8a',
+    	  '#fb9a99',
+    	  '#cab2d6',
+    	  '#ffff99'
+    	]
+  	};
+
+  	const categoricalColumns = [
+  		'Country',
+  		'CountryCode',
+  		'Region',
+  		'Continent'
+  	];
+
+		const options = {
+      width: 960,
+      xVariable,
+      yVariable,
+      yScaleType: 'power',
+      yScaleExponent: 3,
+      idVariable: 'CountryCode',
+      groupByVariable: 'Continent',
+      tooltipColumns,
+      numericColumns,
+      xLabelDetail: 'Country',
+      wrapperId: 'GDP_perCapitaVslifeExpectancy',
+      wrapperLabel: 'example 02',
+      dependent: true,
+      globalExtents,
+      marks,
+      categoricalColumns
+    }
+
+    const update = d3VoronoiScatterplot.drawVoronoiScatterplot('#chart', subset0, options);
+    // console.log('update', update);
+    // console.log('d3VoronoiScatterplot', d3VoronoiScatterplot);
+    // d3VoronoiScatterplot.drawVoronoiScatterplot.update(subset1);
+    d3.select('button')
+      .on('click', () => {
+        console.log('the update button was clicked');
+        const subsetIndices = [0,1,2,3];
+        const randomIndex = Math.floor(Math.random() * subsetIndices.length);
+        console.log('randomIndex', randomIndex);
+        update(subsets[randomIndex]);
+      })
+    // update(subset2);
+    
+    function getGlobalExtents(datasets, options) {
+      // find max extent across all datasets
+      const xVariable = options.xVariable;
+      const yVariable = options.yVariable;
+      const globalExtents = [
+        [0, 0], // global xVariable Predict extent
+        [0, 0]  // global yVariable Residual extent 
+      ];
+      Object.keys(datasets).forEach((key) => {
+        const currentDataset = datasets[key];
+        [xVariable, yVariable].forEach((variable, i) => {
+          const currentExtent = d3.extent(currentDataset, d => Number(d[variable]));
+          // update global min
+          if (currentExtent[0] < globalExtents[i][0]) {
+            globalExtents[i][0] = currentExtent[0];
+          }
+          // update the global max
+          if (currentExtent[1] > globalExtents[i][1]) {
+            globalExtents[i][1] = currentExtent[1];
+          }
+        })
+      })
+      return globalExtents;
+    }
+	}
+</script>
+</body>
+</html>
