@@ -76,9 +76,10 @@
     const globalExtents = getGlobalExtents(subsets, getGlobalExtentsOptions);
 
 		const tooltipColumns = [
-    	{
-    	  name: 'Country'
-    	},
+      {
+        name: 'Country',
+        valueOnly: true
+      },
     	{
     	  name: 'GDP',
     	  type: 'numeric',
@@ -148,6 +149,7 @@
       xDroplineTextFormat: ',.0f'
     }
 
+    console.log('d3VoronoiScatterplot', d3VoronoiScatterplot);
     const update = d3VoronoiScatterplot.drawVoronoiScatterplot('#chart', subset0, options);
     // console.log('update', update);
     // console.log('d3VoronoiScatterplot', d3VoronoiScatterplot);
